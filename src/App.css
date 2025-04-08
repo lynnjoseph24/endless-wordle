@@ -1,3 +1,4 @@
+/* Root styles and CSS reset */
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -5,6 +6,13 @@
   text-align: center;
 }
 
+* {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Main container styles */
 .game-container {
   display: flex;
   flex-direction: column;
@@ -20,6 +28,7 @@
   width: 100%;
 }
 
+/* Header styles */
 .header {
   display: flex;
   justify-content: center;
@@ -27,6 +36,17 @@
   margin-bottom: 0.5rem;
 }
 
+h1 {
+  color: #1a1a1a;
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, #6aaa64, #c9b458);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Stats section styles */
 .stats {
   display: flex;
   justify-content: center;
@@ -54,6 +74,7 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Game board styles */
 .game-board {
   display: flex;
   flex-direction: column;
@@ -66,6 +87,7 @@
   justify-content: center;
 }
 
+/* Tile styles */
 .tile {
   width: 3.5rem;
   height: 3.5rem;
@@ -80,8 +102,10 @@
   color: black;
   border-radius: 8px;
   transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
+/* Tile state styles */
 .tile.correct {
   background-color: #6aaa64;
   color: white;
@@ -103,6 +127,35 @@
   transform: scale(1.05);
 }
 
+/* Correct row animation */
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.row.correct {
+  background: linear-gradient(-45deg, #6aaa64, #538d4e, #4a7c47, #6aaa64);
+  background-size: 200% 200%;
+  animation: gradientAnimation 3s ease infinite;
+  border-radius: 12px;
+  padding: 0.4rem;
+}
+
+.row.correct .tile {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: white;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+
+.row.correct .tile:hover {
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Message styles */
 .message {
   display: flex;
   flex-direction: column;
@@ -116,16 +169,6 @@
   animation: messageAppear 0.3s ease-out;
 }
 
-.message.victory {
-  background: linear-gradient(45deg, rgba(106, 170, 100, 0.1), rgba(201, 180, 88, 0.1));
-  color: #6aaa64;
-}
-
-.message.defeat {
-  background: linear-gradient(45deg, rgba(120, 124, 126, 0.1), rgba(120, 124, 126, 0.2));
-  color: #787c7e;
-}
-
 @keyframes messageAppear {
   from {
     opacity: 0;
@@ -137,6 +180,17 @@
   }
 }
 
+.message.victory {
+  background: linear-gradient(45deg, rgba(106, 170, 100, 0.1), rgba(201, 180, 88, 0.1));
+  color: #6aaa64;
+}
+
+.message.defeat {
+  background: linear-gradient(45deg, rgba(120, 124, 126, 0.1), rgba(120, 124, 126, 0.2));
+  color: #787c7e;
+}
+
+/* Button styles */
 button {
   padding: 0.7rem 1.2rem;
   font-size: 0.9rem;
@@ -161,25 +215,12 @@ button:active {
   transform: translateY(0);
 }
 
-h1 {
-  color: #1a1a1a;
-  margin: 0;
-  font-size: 2rem;
-  font-weight: 700;
-  background: linear-gradient(45deg, #6aaa64, #c9b458);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
 }
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-/* Mobile-specific styles */
+/* Mobile responsiveness */
 @media (max-width: 480px) {
   #root {
     padding: 0.5rem;
@@ -220,16 +261,12 @@ h1 {
   }
 }
 
-/* Prevent text selection on mobile */
-* {
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  -webkit-user-select: none;
+.card {
+  padding: 2em;
 }
 
-/* Add touch feedback for tiles */
-.tile {
-  -webkit-tap-highlight-color: transparent;
+.read-the-docs {
+  color: #888;
 }
 
 /* Prevent zoom on input focus */
@@ -247,25 +284,4 @@ input {
   100% {
     background-position: 0% 50%;
   }
-}
-
-.row.correct {
-  background: linear-gradient(-45deg, #6aaa64, #538d4e, #4a7c47, #6aaa64);
-  background-size: 200% 200%;
-  animation: gradientAnimation 3s ease infinite;
-  border-radius: 12px;
-  padding: 0.4rem;
-}
-
-.row.correct .tile {
-  background: transparent;
-  border-color: rgba(255, 255, 255, 0.3);
-  color: white;
-  transform: scale(1.05);
-  transition: all 0.3s ease;
-}
-
-.row.correct .tile:hover {
-  transform: scale(1.1);
-  border-color: rgba(255, 255, 255, 0.5);
 }

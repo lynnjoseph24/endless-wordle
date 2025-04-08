@@ -1,3 +1,12 @@
+/**
+ * Collection of 5-letter words for the Endless Wordle game.
+ * All words are:
+ * - Exactly 5 letters long
+ * - Common English words
+ * - Suitable for all ages
+ * - No proper nouns (except for common ones)
+ * - No offensive or inappropriate content
+ */
 export const words = [
   "about", "above", "abuse", "actor", "acute", "admit", "adopt", "adult", "after", "again",
   "agent", "agree", "ahead", "alarm", "album", "alert", "alike", "alive", "allow", "alone",
