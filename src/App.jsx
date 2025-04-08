@@ -2,6 +2,62 @@ import { useState, useEffect, useRef } from 'react'
 import { words } from './words'
 import './App.css'
 
+// Floating icons component
+const FloatingIcons = () => {
+  const icons = [
+    // Wordle letters with different animations
+    { char: 'W', animation: 'floatSlow', duration: '8s', delay: '0s', fontSize: '3rem' },
+    { char: 'O', animation: 'floatMedium', duration: '10s', delay: '1s', fontSize: '3rem' },
+    { char: 'R', animation: 'floatFast', duration: '7s', delay: '2s', fontSize: '3rem' },
+    { char: 'D', animation: 'floatSlow', duration: '9s', delay: '3s', fontSize: '3rem' },
+    { char: 'L', animation: 'floatMedium', duration: '11s', delay: '4s', fontSize: '3rem' },
+    { char: 'E', animation: 'floatFast', duration: '8s', delay: '5s', fontSize: '3rem' },
+    
+    // Game-related emojis
+    { char: '🎲', animation: 'floatSlow', duration: '10s', delay: '1s', fontSize: '2.5rem' },
+    { char: '🎮', animation: 'floatMedium', duration: '9s', delay: '2s', fontSize: '2.5rem' },
+    { char: '🎯', animation: 'floatFast', duration: '7s', delay: '3s', fontSize: '2.5rem' },
+    
+    // Animals
+    { char: '🐕', animation: 'floatSlow', duration: '12s', delay: '0.5s', fontSize: '2.8rem' },
+    { char: '🐈', animation: 'floatMedium', duration: '11s', delay: '1.5s', fontSize: '2.8rem' },
+    { char: '🐶', animation: 'floatFast', duration: '9s', delay: '2.5s', fontSize: '2.8rem' },
+    { char: '😺', animation: 'floatSlow', duration: '10s', delay: '3.5s', fontSize: '2.8rem' },
+    
+    // Sports and equipment
+    { char: '🏀', animation: 'floatMedium', duration: '8s', delay: '0.7s', fontSize: '2.3rem' },
+    { char: '🏈', animation: 'floatFast', duration: '9s', delay: '1.7s', fontSize: '2.3rem' },
+    { char: '⚽', animation: 'floatSlow', duration: '11s', delay: '2.7s', fontSize: '2.3rem' },
+    { char: '🎾', animation: 'floatMedium', duration: '10s', delay: '3.7s', fontSize: '2.3rem' },
+    
+    // Protection and equipment
+    { char: '⛑️', animation: 'floatFast', duration: '9s', delay: '0.2s', fontSize: '2.6rem' },
+    { char: '🪖', animation: 'floatSlow', duration: '11s', delay: '1.2s', fontSize: '2.6rem' },
+    { char: '🏆', animation: 'floatMedium', duration: '8s', delay: '2.2s', fontSize: '2.6rem' },
+    { char: '🛡️', animation: 'floatFast', duration: '10s', delay: '3.2s', fontSize: '2.6rem' }
+  ]
+
+  return (
+    <div className="floating-icons">
+      {icons.map((icon, index) => (
+        <div
+          key={index}
+          className="floating-icon"
+          style={{
+            animation: `${icon.animation} ${icon.duration} ease-in-out infinite`,
+            animationDelay: icon.delay,
+            left: `${Math.random() * 90 + 5}%`, // Keep icons away from edges
+            top: `${Math.random() * 90 + 5}%`, // Keep icons away from edges
+            fontSize: icon.fontSize
+          }}
+        >
+          {icon.char}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function App() {
   // Game state
   const [currentWord, setCurrentWord] = useState('') // The word player needs to guess
@@ -151,68 +207,71 @@ function App() {
   }
 
   return (
-    <div className="game-container" onClick={handleContainerClick}>
-      {/* Hidden input for mobile keyboard - only shown on mobile */}
-      {isMobile && (
-        <input
-          ref={inputRef}
-          type="text"
-          className="mobile-input"
-          autoCapitalize="none"
-          autoComplete="off"
-          autoCorrect="off"
-          spellCheck="false"
-          onChange={handleInputChange}
-          inputMode="text"
-        />
-      )}
+    <>
+      <FloatingIcons />
+      <div className="game-container" onClick={handleContainerClick}>
+        {/* Hidden input for mobile keyboard - only shown on mobile */}
+        {isMobile && (
+          <input
+            ref={inputRef}
+            type="text"
+            className="mobile-input"
+            autoCapitalize="none"
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck="false"
+            onChange={handleInputChange}
+            inputMode="text"
+          />
+        )}
 
-      {/* Game Header */}
-      <div className="header">
-        <h1>Never Ending Wordle</h1>
-      </div>
-
-      {/* Stats Display */}
-      <div className="stats">
-        <div className="victory-counter">
-          Victories: <span className="victory-number">{victories}</span>
+        {/* Game Header */}
+        <div className="header">
+          <h1>Endless Wordle</h1>
         </div>
-        <div className="timer">
-          Time: <span className="timer-number">{formatTime(time)}</span>
-        </div>
-      </div>
 
-      {/* Game Board */}
-      <div className="game-board">
-        {[...Array(6)].map((_, rowIndex) => {
-          const guess = guesses[rowIndex] || '';
-          const isCorrectRow = guess === currentWord;
-          
-          return (
-            <div key={rowIndex} className={`row ${isCorrectRow ? 'correct' : ''}`}>
-              {[...Array(5)].map((_, colIndex) => {
-                const letter = guess[colIndex] || (rowIndex === guesses.length ? currentGuess[colIndex] : '');
-                const color = getLetterColor(letter, colIndex, guess);
-                
-                return (
-                  <div key={colIndex} className={`tile ${color}`}>
-                    {letter}
-                  </div>
-                );
-              })}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Game Over Message */}
-      {message && (
-        <div className={`message ${isVictory ? 'victory' : 'defeat'}`}>
-          {message}
-          <button onClick={resetGame}>Play Again</button>
+        {/* Stats Display */}
+        <div className="stats">
+          <div className="victory-counter">
+            Victories: <span className="victory-number">{victories}</span>
+          </div>
+          <div className="timer">
+            Time: <span className="timer-number">{formatTime(time)}</span>
+          </div>
         </div>
-      )}
-    </div>
+
+        {/* Game Board */}
+        <div className="game-board">
+          {[...Array(6)].map((_, rowIndex) => {
+            const guess = guesses[rowIndex] || '';
+            const isCorrectRow = guess === currentWord;
+            
+            return (
+              <div key={rowIndex} className={`row ${isCorrectRow ? 'correct' : ''}`}>
+                {[...Array(5)].map((_, colIndex) => {
+                  const letter = guess[colIndex] || (rowIndex === guesses.length ? currentGuess[colIndex] : '');
+                  const color = getLetterColor(letter, colIndex, guess);
+                  
+                  return (
+                    <div key={colIndex} className={`tile ${color}`}>
+                      {letter}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Game Over Message */}
+        {message && (
+          <div className={`message ${isVictory ? 'victory' : 'defeat'}`}>
+            {message}
+            <button onClick={resetGame}>Play Again</button>
+          </div>
+        )}
+      </div>
+    </>
   )
 }
 
