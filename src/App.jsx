@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { words } from './words'
 import './App.css'
 
@@ -15,6 +15,9 @@ function App() {
   // Timer state
   const [time, setTime] = useState(0) // Game duration in seconds
   const [isTimerRunning, setIsTimerRunning] = useState(false) // Timer active state
+
+  // Reference to hidden input for mobile keyboard
+  const inputRef = useRef(null)
 
   // Initialize game with random word
   useEffect(() => {
@@ -34,55 +37,78 @@ function App() {
   }, [isTimerRunning])
 
   // Handle keyboard input
+  const handleKeyInput = (key) => {
+    if (gameOver) return
+
+    key = key.toLowerCase()
+    
+    // Handle Enter key press
+    if (key === 'enter') {
+      if (currentGuess.length === 5) {
+        // Check for victory
+        if (currentGuess === currentWord) {
+          setGameOver(true)
+          setIsVictory(true)
+          setVictories(prev => prev + 1)
+          setIsTimerRunning(false)
+          setMessage(`🎉 Congratulations! You won! Time: ${formatTime(time)}`)
+          return
+        }
+        // Check for game over (no more guesses)
+        if (guesses.length >= 5) {
+          setGameOver(true)
+          setIsVictory(false)
+          setIsTimerRunning(false)
+          setVictories(0) // Reset victories on loss
+          setMessage(`😢 Game Over! The word was "${currentWord.toUpperCase()}" Time: ${formatTime(time)}`)
+          return
+        }
+        // Add guess to history and clear current guess
+        setGuesses([...guesses, currentGuess])
+        setCurrentGuess('')
+      }
+    } 
+    // Handle Backspace key press
+    else if (key === 'backspace') {
+      setCurrentGuess(prev => prev.slice(0, -1))
+    } 
+    // Handle letter key press
+    else if (/^[a-z]$/.test(key) && currentGuess.length < 5) {
+      // Start timer on first guess
+      if (guesses.length === 0 && currentGuess.length === 0) {
+        setIsTimerRunning(true)
+      }
+      setCurrentGuess(prev => prev + key)
+    }
+  }
+
+  // Handle physical keyboard events
   useEffect(() => {
     const handleKeyPress = (event) => {
-      if (gameOver) return
-
-      const key = event.key.toLowerCase()
-      
-      // Handle Enter key press
-      if (key === 'enter') {
-        if (currentGuess.length === 5) {
-          // Check for victory
-          if (currentGuess === currentWord) {
-            setGameOver(true)
-            setIsVictory(true)
-            setVictories(prev => prev + 1)
-            setIsTimerRunning(false)
-            setMessage(`🎉 Congratulations! You won! Time: ${formatTime(time)}`)
-            return
-          }
-          // Check for game over (no more guesses)
-          if (guesses.length >= 5) {
-            setGameOver(true)
-            setIsVictory(false)
-            setIsTimerRunning(false)
-            setVictories(0) // Reset victories on loss
-            setMessage(`😢 Game Over! The word was "${currentWord.toUpperCase()}" Time: ${formatTime(time)}`)
-            return
-          }
-          // Add guess to history and clear current guess
-          setGuesses([...guesses, currentGuess])
-          setCurrentGuess('')
-        }
-      } 
-      // Handle Backspace key press
-      else if (key === 'backspace') {
-        setCurrentGuess(prev => prev.slice(0, -1))
-      } 
-      // Handle letter key press
-      else if (/^[a-z]$/.test(key) && currentGuess.length < 5) {
-        // Start timer on first guess
-        if (guesses.length === 0 && currentGuess.length === 0) {
-          setIsTimerRunning(true)
-        }
-        setCurrentGuess(prev => prev + key)
-      }
+      handleKeyInput(event.key)
     }
 
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
   }, [currentGuess, currentWord, guesses, gameOver, time])
+
+  // Handle mobile input changes
+  const handleInputChange = (event) => {
+    const value = event.target.value
+    const lastChar = value[value.length - 1]
+    if (lastChar) {
+      handleKeyInput(lastChar)
+    }
+    // Clear the input for next character
+    event.target.value = ''
+  }
+
+  // Focus input when container is clicked
+  const handleContainerClick = () => {
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
+  }
 
   // Format time as MM:SS
   const formatTime = (seconds) => {
@@ -113,7 +139,19 @@ function App() {
   }
 
   return (
-    <div className="game-container">
+    <div className="game-container" onClick={handleContainerClick}>
+      {/* Hidden input for mobile keyboard */}
+      <input
+        ref={inputRef}
+        type="text"
+        className="mobile-input"
+        autoCapitalize="none"
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck="false"
+        onChange={handleInputChange}
+      />
+
       {/* Game Header */}
       <div className="header">
         <h1>Never Ending Wordle</h1>
