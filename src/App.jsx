@@ -49,6 +49,7 @@ function App() {
             setGameOver(true)
             setIsVictory(false)
             setIsTimerRunning(false)
+            setVictories(0)
             setMessage(`😢 Game Over! The word was "${currentWord.toUpperCase()}" Time: ${formatTime(time)}`)
             return
           }
@@ -108,21 +109,25 @@ function App() {
         </div>
       </div>
       <div className="game-board">
-        {[...Array(6)].map((_, rowIndex) => (
-          <div key={rowIndex} className="row">
-            {[...Array(5)].map((_, colIndex) => {
-              const guess = guesses[rowIndex] || ''
-              const letter = guess[colIndex] || (rowIndex === guesses.length ? currentGuess[colIndex] : '')
-              const color = getLetterColor(letter, colIndex, guess)
-              
-              return (
-                <div key={colIndex} className={`tile ${color}`}>
-                  {letter}
-                </div>
-              )
-            })}
-          </div>
-        ))}
+        {[...Array(6)].map((_, rowIndex) => {
+          const guess = guesses[rowIndex] || '';
+          const isCorrectRow = guess === currentWord;
+          
+          return (
+            <div key={rowIndex} className={`row ${isCorrectRow ? 'correct' : ''}`}>
+              {[...Array(5)].map((_, colIndex) => {
+                const letter = guess[colIndex] || (rowIndex === guesses.length ? currentGuess[colIndex] : '');
+                const color = getLetterColor(letter, colIndex, guess);
+                
+                return (
+                  <div key={colIndex} className={`tile ${color}`}>
+                    {letter}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
       {message && (
         <div className={`message ${isVictory ? 'victory' : 'defeat'}`}>

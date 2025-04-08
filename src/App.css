@@ -236,3 +236,36 @@ h1 {
 input {
   font-size: 16px;
 }
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.row.correct {
+  background: linear-gradient(-45deg, #6aaa64, #538d4e, #4a7c47, #6aaa64);
+  background-size: 200% 200%;
+  animation: gradientAnimation 3s ease infinite;
+  border-radius: 12px;
+  padding: 0.4rem;
+}
+
+.row.correct .tile {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: white;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+
+.row.correct .tile:hover {
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
