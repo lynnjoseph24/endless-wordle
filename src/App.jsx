@@ -11,6 +11,7 @@ function App() {
   const [message, setMessage] = useState('') // Game status message
   const [victories, setVictories] = useState(0) // Number of consecutive wins
   const [isVictory, setIsVictory] = useState(false) // Whether current game was won
+  const [isMobile, setIsMobile] = useState(false) // Whether we're on a mobile device
   
   // Timer state
   const [time, setTime] = useState(0) // Game duration in seconds
@@ -18,6 +19,15 @@ function App() {
 
   // Reference to hidden input for mobile keyboard
   const inputRef = useRef(null)
+
+  // Detect mobile device on mount
+  useEffect(() => {
+    const checkMobile = () => {
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+      setIsMobile(isTouchDevice)
+    }
+    checkMobile()
+  }, [])
 
   // Initialize game with random word
   useEffect(() => {
@@ -69,7 +79,7 @@ function App() {
       }
     } 
     // Handle Backspace key press
-    else if (key === 'backspace') {
+    else if (key === 'backspace' || key === 'delete') {
       setCurrentGuess(prev => prev.slice(0, -1))
     } 
     // Handle letter key press
@@ -82,15 +92,17 @@ function App() {
     }
   }
 
-  // Handle physical keyboard events
+  // Handle physical keyboard events - only for non-mobile
   useEffect(() => {
+    if (isMobile) return // Skip on mobile devices
+
     const handleKeyPress = (event) => {
       handleKeyInput(event.key)
     }
 
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [currentGuess, currentWord, guesses, gameOver, time])
+  }, [currentGuess, currentWord, guesses, gameOver, time, isMobile])
 
   // Handle mobile input changes
   const handleInputChange = (event) => {
@@ -103,9 +115,9 @@ function App() {
     event.target.value = ''
   }
 
-  // Focus input when container is clicked
+  // Focus input when container is clicked - only for mobile
   const handleContainerClick = () => {
-    if (inputRef.current) {
+    if (isMobile && inputRef.current) {
       inputRef.current.focus()
     }
   }
@@ -140,17 +152,20 @@ function App() {
 
   return (
     <div className="game-container" onClick={handleContainerClick}>
-      {/* Hidden input for mobile keyboard */}
-      <input
-        ref={inputRef}
-        type="text"
-        className="mobile-input"
-        autoCapitalize="none"
-        autoComplete="off"
-        autoCorrect="off"
-        spellCheck="false"
-        onChange={handleInputChange}
-      />
+      {/* Hidden input for mobile keyboard - only shown on mobile */}
+      {isMobile && (
+        <input
+          ref={inputRef}
+          type="text"
+          className="mobile-input"
+          autoCapitalize="none"
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck="false"
+          onChange={handleInputChange}
+          inputMode="text"
+        />
+      )}
 
       {/* Game Header */}
       <div className="header">
